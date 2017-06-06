@@ -290,7 +290,9 @@ module Puma
           client.write_400
           client.close
 
-          @events.parse_error self, client.env, e
+          unless buffer.length == 0
+            @events.parse_error self, client.env, e
+          end
         rescue ConnectionError
           client.close
         else
@@ -474,8 +476,9 @@ module Puma
 
         client.write_400
 
-        @events.parse_error self, client.env, e
-
+        unless buffer.length == 0
+          @events.parse_error self, client.env, e
+        end
       # Server error
       rescue StandardError => e
         lowlevel_error(e, client.env)
